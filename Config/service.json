@@ -1,0 +1,26 @@
+{
+    "matomo.hook.config": {
+        "class": "SoosyzeExtension\\Matomo\\Services\\HookConfig",
+        "arguments": [
+            "@config",
+            "@user"
+        ],
+        "hooks": {
+            "config.edit.menu": "menu",
+            "config.edit.matomo.form.generate": "form",
+            "config.update.matomo.validator": "validator",
+            "config.update.matomo.before": "before"
+        }
+    },
+    "matomo.hook.app": {
+        "class": "SoosyzeExtension\\Matomo\\Services\\HookApp",
+        "arguments": [
+            "@config",
+            "@template",
+            "@user"
+        ],
+        "hooks": {
+            "app.response.after": "hookResponseAfter"
+        }
+    }
+}

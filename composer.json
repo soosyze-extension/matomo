@@ -1,0 +1,25 @@
+{
+    "name": "soosyze-extension/matomo",
+    "type": "soosyze-module",
+    "description": "Mesure votre audience en ajoutant le code de suivi javascript Matomo(Piwik) à votre site.",
+    "version": "1.0",
+    "autoload": {
+        "psr-4": {
+            "SoosyzeExtension\\Matomo\\": "/"
+        }
+    },
+    "extra": {
+        "soosyze-module": {
+            "title": "Matomo",
+            "package": "Analytics",
+            "controllers": {
+                "Matomo": "SoosyzeExtension\\Matomo\\Controller\\Matomo"
+            },
+            "icon": {
+                "name": "fas fa-chart-line",
+                "background-color": "#3450a3",
+                "color": "#fff"
+            }
+        }
+    }
+}
