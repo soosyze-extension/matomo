@@ -22,8 +22,7 @@ class HookConfig
 
     public function menu(&$menu)
     {
-        $menu[] = [
-            'key'        => 'matomo',
+        $menu['matomo'] = [
             'title_link' => 'Matomo'
         ];
     }
@@ -31,7 +30,7 @@ class HookConfig
     public function form(&$form, $data)
     {
         return $form->group('config-fieldset', 'fieldset', function ($form) use ($data) {
-            $form->legend('config-legend', 'Paramètres')
+            $form->legend('config-legend', t('Settings'))
                     ->group('analytics_id-group', 'div', function ($form) use ($data) {
                         $form->label('analytics_id-label', 'Matomo site ID')
                         ->text('analytics_id', [
@@ -52,30 +51,30 @@ class HookConfig
                     }, [ 'class' => 'form-group' ]);
         })
                 ->group('page-fieldset', 'fieldset', function ($form) use ($data) {
-                    $form->legend('page-legend', 'Pages')
+                    $form->legend('page-legend', t('Pages'))
                     ->group('visibility-group', 'div', function ($form) use ($data) {
                         $form->radio('analytics_visibility_pages', [
                             'checked'  => !$data[ 'analytics_visibility_pages' ],
+                            'id'       => 'visibility1',
                             'required' => 1,
-                            'value'    => 0,
-                            'id'       => 'visibility1'
-                        ])->label('analytics_visibility_pages-label', 'Exclure le suivi des pages listées', [
+                            'value'    => 0
+                        ])->label('analytics_visibility_pages-label', t('Exclude tracking of listed pages'), [
                             'for' => 'visibility1'
                         ]);
                     }, [ 'class' => 'form-group' ])
                     ->group('visibility1-group', 'div', function ($form) use ($data) {
                         $form->radio('analytics_visibility_pages', [
                             'checked'  => $data[ 'analytics_visibility_pages' ],
+                            'id'       => 'visibility2',
                             'required' => 1,
-                            'value'    => 1,
-                            'id'       => 'visibility2'
-                        ])->label('analytics_visibility_pages-label', 'Activer le suivi des pages listées', [
+                            'value'    => 1
+                        ])->label('analytics_visibility_pages-label', t('Enable tracking of listed pages'), [
                             'for' => 'visibility2'
                         ]);
                     }, [ 'class' => 'form-group' ])
                     ->group('url-group', 'div', function ($form) use ($data) {
-                        $form->label('url-label', 'Liste des pages', [
-                            'data-tooltip' => 'Saisir un chemin par ligne. Le caractère «%» est un caractère de remplacement spécifiant tous les caractères.'
+                        $form->label('url-label', t('List of pages'), [
+                            'data-tooltip' => t('Entrez un chemin par ligne. Le caractère "%" est un caractère générique qui spécifie tous les caractères.')
                         ])
                         ->textarea('analytics_pages', $data[ 'analytics_pages' ], [
                             'class'       => 'form-control',
@@ -85,14 +84,14 @@ class HookConfig
                     }, [ 'class' => 'form-group' ]);
                 })
                 ->group('roles-fieldset', 'fieldset', function ($form) use ($data) {
-                    $form->legend('role-legend', 'Rôles')
+                    $form->legend('role-legend', t('User Roles'))
                     ->group('visibility-group', 'div', function ($form) use ($data) {
                         $form->radio('analytics_visibility_roles', [
                             'checked'  => !$data[ 'analytics_visibility_roles' ],
                             'id'       => 'visibility3',
                             'required' => 1,
                             'value'    => 0
-                        ])->label('analytics_visibility_roles-label', 'Activer le suivi aux rôles sélectionnés', [
+                        ])->label('analytics_visibility_roles-label', t('Enable tracking on selected roles'), [
                             'for' => 'visibility3'
                         ]);
                     }, [ 'class' => 'form-group' ])
@@ -102,7 +101,7 @@ class HookConfig
                             'id'       => 'visibility4',
                             'required' => 1,
                             'value'    => 1
-                        ])->label('analytics_visibility_roles-label', 'Activer le suivi aux rôles non sélectionnés', [
+                        ])->label('analytics_visibility_roles-label', t('Enable tracking for unselected roles'), [
                             'for' => 'visibility4'
                         ]);
                     }, [ 'class' => 'form-group' ]);
@@ -110,17 +109,17 @@ class HookConfig
                     foreach ($this->user->getRoles() as $role) {
                         $form->group("analytics_roles-{$role[ 'role_id' ]}-group", 'div', function ($form) use ($data, $role) {
                             $form->checkbox("analytics_roles-{$role[ 'role_id' ]}", [
-                                'value'   => $role[ 'role_id' ],
-                                'checked' => \in_array($role[ 'role_id' ], $data[ 'analytics_roles' ])
+                                'checked' => \in_array($role[ 'role_id' ], $data[ 'analytics_roles' ]),
+                                'value'   => $role[ 'role_id' ]
                             ])
-                            ->label('analytics_roles-label', '<span class="ui"></span>' . $role[ 'role_label' ], [
+                            ->label('analytics_roles-label', '<span class="ui"></span>' . t($role[ 'role_label' ]), [
                                 'for' => "analytics_roles-{$role[ 'role_id' ]}"
                             ]);
                         }, [ 'class' => 'form-group' ]);
                     }
                 })
                 ->token('config_matomo')
-                ->submit('submit', 'Enregistrer', [ 'class' => 'btn btn-success' ]);
+                ->submit('submit', t('Save'), [ 'class' => 'btn btn-success' ]);
     }
 
     public function validator(&$validator)

@@ -4,8 +4,8 @@ namespace SoosyzeExtension\Matomo\Controller;
 
 class Matomo extends \Soosyze\Controller
 {
-  public function __construct()
-  {
-    $this->pathServices = dirname(__DIR__) . '/Config/service.json';
-  }
+    public function __construct()
+    {
+        $this->pathServices = dirname(__DIR__) . '/Config/service.json';
+    }
 }

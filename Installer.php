@@ -4,7 +4,7 @@ namespace SoosyzeExtension\Matomo;
 
 class Installer implements \SoosyzeCore\System\Migration
 {
-    public function install($ci)
+    public function install(\Psr\Container\ContainerInterface $ci)
     {
         $ci->config()
             ->set('settings.analytics_url', '')
@@ -15,7 +15,7 @@ class Installer implements \SoosyzeCore\System\Migration
             ->set('settings.analytics_roles', '1');
     }
 
-    public function uninstall($ci)
+    public function uninstall(\Psr\Container\ContainerInterface $ci)
     {
         $ci->config()
             ->del('settings.analytics_url')
