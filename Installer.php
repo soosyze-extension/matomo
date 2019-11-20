@@ -4,6 +4,11 @@ namespace SoosyzeExtension\Matomo;
 
 class Installer implements \SoosyzeCore\System\Migration
 {
+    public function getDir()
+    {
+        return __DIR__;
+    }
+
     public function install(\Psr\Container\ContainerInterface $ci)
     {
         $ci->config()
@@ -24,11 +29,6 @@ class Installer implements \SoosyzeCore\System\Migration
             ->del('settings.analytics_pages')
             ->del('settings.analytics_visibility_roles')
             ->del('settings.analytics_roles');
-    }
-
-    public function getComposer()
-    {
-        return __DIR__ . '/composer.json';
     }
 
     public function hookInstall(\Psr\Container\ContainerInterface $ci)

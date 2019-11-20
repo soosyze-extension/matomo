@@ -9,12 +9,10 @@
         }
     },
     "extra": {
-        "soosyze-module": {
+        "soosyze": {
             "title": "Matomo",
             "package": "Analytics",
-            "controllers": {
-                "Matomo": "SoosyzeExtension\\Matomo\\Controller\\Matomo"
-            },
+            "controller": "SoosyzeExtension\\Matomo\\Controller\\Matomo",
             "icon": {
                 "name": "fas fa-chart-line",
                 "background-color": "#3450a3",
