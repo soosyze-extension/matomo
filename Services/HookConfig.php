@@ -2,7 +2,7 @@
 
 namespace SoosyzeExtension\Matomo\Services;
 
-class HookConfig
+class HookConfig implements \SoosyzeCore\Config\Services\ConfigInterface
 {
     /**
      * @var \Soosyze\Config
@@ -22,12 +22,12 @@ class HookConfig
 
     public function menu(&$menu)
     {
-        $menu['matomo'] = [
+        $menu[ 'matomo' ] = [
             'title_link' => 'Matomo'
         ];
     }
 
-    public function form(&$form, $data)
+    public function form(&$form, $data, $req)
     {
         return $form->group('config-fieldset', 'fieldset', function ($form) use ($data) {
             $form->legend('config-legend', t('Settings'))
@@ -58,7 +58,7 @@ class HookConfig
                             'id'       => 'visibility1',
                             'required' => 1,
                             'value'    => 0
-                        ])->label('analytics_visibility_pages-label', t('Exclude tracking of listed pages'), [
+                        ])->label('analytics_visibility_pages-label', '<i class="fa fa-eye-slash" aria-hidden="true"></i> ' . t('Exclude tracking of listed pages'), [
                             'for' => 'visibility1'
                         ]);
                     }, [ 'class' => 'form-group' ])
@@ -68,7 +68,7 @@ class HookConfig
                             'id'       => 'visibility2',
                             'required' => 1,
                             'value'    => 1
-                        ])->label('analytics_visibility_pages-label', t('Enable tracking of listed pages'), [
+                        ])->label('analytics_visibility_pages-label', '<i class="fa fa-eye" aria-hidden="true"></i> ' . t('Enable tracking of listed pages'), [
                             'for' => 'visibility2'
                         ]);
                     }, [ 'class' => 'form-group' ])
@@ -80,6 +80,9 @@ class HookConfig
                             'class'       => 'form-control',
                             'placeholder' => 'admin' . PHP_EOL . 'admin/*',
                             'rows'        => 5
+                        ])
+                        ->html('info-variable_allowed', '<p>:_content</p>', [
+                            '_content' => t('Variables allowed') . ' <code>%</code>'
                         ]);
                     }, [ 'class' => 'form-group' ]);
                 })
@@ -91,7 +94,7 @@ class HookConfig
                             'id'       => 'visibility3',
                             'required' => 1,
                             'value'    => 0
-                        ])->label('analytics_visibility_roles-label', t('Enable tracking on selected roles'), [
+                        ])->label('analytics_visibility_roles-label', '<i class="fa fa-eye-slash" aria-hidden="true"></i> ' . t('Enable tracking on selected roles'), [
                             'for' => 'visibility3'
                         ]);
                     }, [ 'class' => 'form-group' ])
@@ -101,7 +104,7 @@ class HookConfig
                             'id'       => 'visibility4',
                             'required' => 1,
                             'value'    => 1
-                        ])->label('analytics_visibility_roles-label', t('Enable tracking for unselected roles'), [
+                        ])->label('analytics_visibility_roles-label', '<i class="fa fa-eye" aria-hidden="true"></i> ' . t('Enable tracking for unselected roles'), [
                             'for' => 'visibility4'
                         ]);
                     }, [ 'class' => 'form-group' ]);
@@ -126,9 +129,9 @@ class HookConfig
     {
         $validator->setRules([
             'analytics_id'               => 'required|string',
-            'analytics_url'              => 'required|url|htmlsc',
+            'analytics_url'              => 'required|url',
             'analytics_visibility_pages' => 'bool',
-            'analytics_pages'            => 'required|string|htmlsc',
+            'analytics_pages'            => 'required|string',
             'analytics_visibility_roles' => 'bool'
         ]);
 
@@ -137,10 +140,8 @@ class HookConfig
         }
     }
 
-    public function before(
-        \Soosyze\Components\Validator\Validator &$validator,
-        &$data
-    ) {
+    public function before(&$validator, &$data, $id)
+    {
         $analytics_roles = [];
         foreach ($this->user->getRoles() as $role) {
             if ($validator->getInput("analytics_roles-{$role[ 'role_id' ]}")) {
@@ -156,5 +157,13 @@ class HookConfig
             'analytics_visibility_roles' => ($validator->getInput('analytics_visibility_roles') === '1'),
             'analytics_roles'            => implode(',', $analytics_roles)
         ];
+    }
+
+    public function after(&$validator, $data, $id)
+    {
+    }
+
+    public function files(&$inputsFile)
+    {
     }
 }

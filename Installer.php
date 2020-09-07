@@ -2,13 +2,18 @@
 
 namespace SoosyzeExtension\Matomo;
 
-class Installer implements \SoosyzeCore\System\Migration
+class Installer extends \SoosyzeCore\System\Migration
 {
     public function getDir()
     {
         return __DIR__;
     }
-
+    
+    public function boot()
+    {
+        $this->loadTranslation('fr', __DIR__ . '/Lang/fr/config.json');
+    }
+    
     public function install(\Psr\Container\ContainerInterface $ci)
     {
         $ci->config()
