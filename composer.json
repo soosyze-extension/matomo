@@ -1,8 +1,8 @@
 {
-    "name": "soosyze-extension/matomo",
+    "name": "soosyze/matomo",
     "type": "soosyze-module",
     "description": "Measure your audience by adding the Matomo (Piwik) javascript tracking code to your site.",
-    "version": "1.0",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
             "SoosyzeExtension\\Matomo\\": "/"

@@ -1,37 +1,42 @@
 <?php
 
-namespace SoosyzeExtension\Matomo\Services;
+namespace SoosyzeExtension\Matomo\Hook;
 
-class HookApp
+use SoosyzeCore\Template\Services\Templating;
+
+class App
 {
-    protected $config;
+    /**
+     * @var \Soosyze\Config
+     */
+    private $config;
 
-    protected $tpl;
+    /**
+     * @var \SoosyzeCore\User\Services\User
+     */
+    private $user;
 
-    protected $user;
-
-    public function __construct($config, $template, $user)
+    public function __construct($config, $user)
     {
         $this->config = $config;
-        $this->tpl    = $template;
         $this->user   = $user;
-        $this->views  = dirname(__DIR__) . '/Views/';
     }
 
-    public function hookResponseAfter($request, &$response)
+    public function onResponseAfter($request, &$response)
     {
-        if (!($response instanceof \SoosyzeCore\Template\Services\Templating)) {
+        if (!($response instanceof Templating)) {
             return;
         }
 
+        $active = $this->config->get('settings.analytics_matomo', false);
         $url = $this->config->get('settings.analytics_url', false);
         $id  = $this->config->get('settings.analytics_id', false);
 
-        if (!$url || !$id || !$this->isVisibilityPages($request) || !$this->isVisibilityRoles()) {
+        if (!$active || !$url || !$id || !$this->isVisibilityPages($request) || !$this->isVisibilityRoles()) {
             return;
         }
 
-        $script = $response->getBlock('this')->getVar('scripts');
+        $scripts = $response->getBlock('this')->getVar('scripts_inline');
         /* Obligation CNIL */
         $rgpd   = '_paq.push([function() {'
             . 'var self = this;'
@@ -47,7 +52,7 @@ class HookApp
             . 'this.setVisitorCookieTimeout( getOriginalVisitorCookieTimeout() );'
             . '}]);';
 
-        $script .= '<script type="text/javascript">'
+        $scripts .= '<script type="text/javascript">'
             . 'var _paq = window._paq || [];'
             . $rgpd
             /* tracker methods like \"setCustomDimension\" should be called before \"trackPageView\" */
@@ -68,31 +73,7 @@ class HookApp
             . '})();'
             . '</script>';
 
-        $response->view('this', [ 'scripts' => $script ]);
-    }
-
-    protected function isVisibilityRoles()
-    {
-        $user            = $this->user->isConnected();
-        $analytics_roles = explode(',', $this->config->get('settings.analytics_roles'));
-        $visibility      = $this->config->get('settings.analytics_visibility_roles');
-
-        /* S'il n'y a pas d'utilisateur et que l'on demande de suivre les utilisateurs non connectés. */
-        if (!$user && in_array(1, $analytics_roles)) {
-            return !$visibility;
-        }
-
-        $roles = $this->user->getRolesUser($user[ 'user_id' ]);
-
-        foreach ($analytics_roles as $analytics_role) {
-            foreach ($roles as $role) {
-                if ($analytics_role == $role[ 'role_id' ]) {
-                    return !$visibility;
-                }
-            }
-        }
-
-        return $visibility;
+        $response->view('this', [ 'scripts_inline' => $scripts ]);
     }
 
     protected function isVisibilityPages($request)
@@ -119,5 +100,29 @@ class HookApp
         }
 
         return !$visibility;
+    }
+
+    protected function isVisibilityRoles()
+    {
+        $user            = $this->user->isConnected();
+        $analytics_roles = explode(',', $this->config->get('settings.analytics_roles'));
+        $visibility      = $this->config->get('settings.analytics_visibility_roles');
+
+        /* S'il n'y a pas d'utilisateur et que l'on demande de suivre les utilisateurs non connectés. */
+        if (!$user && in_array(1, $analytics_roles)) {
+            return !$visibility;
+        }
+
+        $roles = $this->user->getRolesUser($user[ 'user_id' ]);
+
+        foreach ($analytics_roles as $analytics_role) {
+            foreach ($roles as $role) {
+                if ($analytics_role == $role[ 'role_id' ]) {
+                    return !$visibility;
+                }
+            }
+        }
+
+        return $visibility;
     }
 }
